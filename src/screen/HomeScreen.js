@@ -28,7 +28,8 @@ const styles = StyleSheet.create({
         fontSize: 48,
         textAlign: 'center',
         color: 'white',
-        marginTop: 100, marginBottom: 100
+        marginTop: 111, 
+        marginBottom: 111
     },
 
     btn: {

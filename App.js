@@ -9,7 +9,7 @@ import { createStackNavigator } from 'react-navigation-stack'
 const AppNavigator = createStackNavigator({
   Home: HomeScreen,
   EMOM: EMOMScreen
-}, { initialRouteName: 'Home' })
+}, { initialRouteName: 'EMOM' })
 
 export default createAppContainer(AppNavigator)
 
