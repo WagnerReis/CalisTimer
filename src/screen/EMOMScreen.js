@@ -4,6 +4,8 @@ import { View, ScrollView, Text, StyleSheet, Image, TextInput, Keyboard, Touchab
 import Select from '../components/Select'
 import Title from '../components/Title'
 import Time from '../components/Time'
+import ProgressBar from '../components/ProgressBar'
+import BackgroundProgress from '../components/BackgroundProgress'
 
 class EMOMScreen extends Component {
     state = {
@@ -24,7 +26,7 @@ class EMOMScreen extends Component {
         this.kbHide = Keyboard.addListener('keyboardWillHide', () => {
             this.setState({ keyboardIsVisible: false })
         })
-        // this.play()
+        this.play()
     }
     componentWillUnmount() {
         this.kbShow.remove()
@@ -34,39 +36,43 @@ class EMOMScreen extends Component {
     play = () => {
         this.setState({ isRunning: true })
         const count = () => {
-            this.setState({ count: this.state.count + 1}, () => {
-                if(this.state.count === parseInt(this.state.time) * 60){
+            this.setState({ count: this.state.count + 1 }, () => {
+                if (this.state.count === parseInt(this.state.time) * 60) {
                     clearInterval(this.countTimer)
                 }
             })
         }
 
-        if(this.state.countdown === 1) {
+        if (this.state.countdown === 1) {
             this.countdownTimer = setInterval(() => {
-                this.setState({ countdownValue: this.state.countdownValue - 1}, () => {
-                    if(this.state.countdownValue === 0) {
+                this.setState({ countdownValue: this.state.countdownValue - 1 }, () => {
+                    if (this.state.countdownValue === 0) {
                         clearInterval(this.countdownTimer)
                         this.countTimer = setInterval(count, 100)
                     }
                 })
             }, 1000)
-        }else {
+        } else {
             this.countTimer = setInterval(count, 100)
         }
     }
 
     render() {
         if (this.state.isRunning) {
-            const percMinute = (this.state.count % 60) / 60
-            const percTime = (this.state.count/60) / parseInt(this.state.time)
+            const percMinute = parseInt(((this.state.count % 60) / 60) * 100)
+            const percTime = parseInt(((this.state.count / 60) / parseInt(this.state.time)) * 100)
             return (
-                <View style={[styles.container, { justifyContent: 'center'}]}>
-                    <Text>Countdown: {this.state.countdownValue}</Text>
-                    <Text>Count: {this.state.count}</Text>
-                    <Time time={this.state.count} />
-                    <Text>Minute: {percMinute}</Text>
-                    <Text>Time: {percTime}</Text>
-                </View>
+                <BackgroundProgress percentage={percMinute}>
+                    <View style={{ flex: 1, justifyContent: 'center' }}>
+                        <Text>Countdown: {this.state.countdownValue}</Text>
+                        <Text>Count: {this.state.count}</Text>
+                        <Time time={this.state.count} />
+                        <ProgressBar percentage={percTime} />
+                        <Time time={parseInt(this.state.time) * 60 - this.state.count} type='text2' appendedText={' restantes'} />
+                        <Text>Minute: {percMinute}</Text>
+                        <Text>Time: {percTime}</Text>
+                    </View>
+                </BackgroundProgress>
             )
         }
         return (
@@ -130,6 +136,11 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#D6304A',
         paddingTop: 120
+    },
+
+    container2: {
+        flex: 1,
+        backgroundColor: '#D6304A'
     },
 
     label: {
