@@ -19,7 +19,7 @@ class EMOMScreen extends Component {
         time: '2',
 
         isRunning: false,
-        countdownValue: 5,
+        countdownValue: 0,
         count: 0
     }
     componentDidMount() {
@@ -41,17 +41,29 @@ class EMOMScreen extends Component {
 
     playAlert = () => {
         const resto = this.state.count % 60
-        if(this.state.alerts.indexOf(resto) >= 0) {
+        if (this.state.alerts.indexOf(resto) >= 0) {
             this.alert.play()
         }
-        if(this.state.countdown === 1) {
-            if(resto >= 55 && resto < 60) {
+        if (this.state.countdown === 1) {
+            if (resto >= 55 && resto < 60) {
                 this.alert.play()
             }
         }
     }
+    
+    stop = () => {
+        clearInterval(this.countdownTimer)
+        clearInterval(this.countTimer)
+        this.setState({
+            isRunning: false
+        })
+    }
 
     play = () => {
+        this.setState({
+            count: 0,
+            countdownValue: this.state.countdown === 1 ? 5 : 0
+        })
         this.setState({ isRunning: true })
         const count = () => {
             this.setState({ count: this.state.count + 1 }, () => {
@@ -85,20 +97,31 @@ class EMOMScreen extends Component {
             return (
                 <BackgroundProgress percentage={percMinute}>
                     <View style={{ flex: 1, justifyContent: 'center' }}>
-                        <Text>Countdown: {this.state.countdownValue}</Text>
-                        <Text>Count: {this.state.count}</Text>
-                        <Time time={this.state.count} />
-                        <ProgressBar percentage={percTime} />
-                        <Time time={parseInt(this.state.time) * 60 - this.state.count} type='text2' appendedText={' restantes'} />
-                        <Text>Minute: {percMinute}</Text>
-                        <Text>Time: {percTime}</Text>
+                        <View style={{ flex: 1, justifyContent: 'center' }}>
+                            <Title title='EMOM' subTitle='Every Minute On the Minute' style={{ paddingTop: this.state.keyboardIsVisible ? 20 : 100 }} />
+                        </View>
+                        <View style={{ flex: 1, justifyContent: 'center' }}>
+                            <Time time={this.state.count} />
+                            <ProgressBar percentage={percTime} />
+                            <Time time={parseInt(this.state.time) * 60 - this.state.count} type='text2' appendedText={' restantes'} />
+                        </View>
+                        <View style={{ flex: 1, justifyContent: 'flex-end'}}>
+                            {
+                                this.state.countdownValue > 0 ?
+                                    <Text style={styles.countdown}>{this.state.countdownValue}</Text>
+                                    : null
+                            }
+                            <TouchableOpacity style={{ alignSelf: 'center', marginBottom: 40 }} onPress={this.stop} >
+                                <Image source={require('../../assets/btn-stop.png')} />
+                            </TouchableOpacity>
+                        </View>
                     </View>
                 </BackgroundProgress>
             )
         }
         return (
             <ScrollView style={styles.container} >
-                <Title title='EMOM' subTitle='Every Minute On the Minute' />
+                <Title title='EMOM' subTitle='Every Minute On the Minute' style={{ paddingTop: this.state.keyboardIsVisible ? 20 : 200 }} />
                 <Image style={{ alignSelf: 'center', marginBottom: 17 }} source={require('../../assets/settings-cog.png')} />
                 <Select
                     label={'Alertas:'}
@@ -176,6 +199,13 @@ const styles = StyleSheet.create({
         color: 'black',
         fontFamily: 'Ubuntu-Regular',
         fontSize: 48
+    },
+
+    countdown: {
+        fontFamily: 'Ubuntu-Bold',
+        fontSize: 144,
+        color: 'white',
+        textAlign: 'center',
     }
 })
 
