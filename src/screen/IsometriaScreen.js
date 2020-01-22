@@ -40,8 +40,8 @@ class IsometriaScreen extends Component {
     }
 
     playAlert = () => {
-        const resto = 0
-        if (resto >= 55 && resto < 60) {
+        const { count, time } = this.state
+        if (count >= parseInt(time) - 5 && count <= parseInt(time)) {
             this.alert.play()
         }
     }
@@ -49,9 +49,9 @@ class IsometriaScreen extends Component {
     stop = () => {
         clearInterval(this.countdownTimer)
         clearInterval(this.countTimer)
-        this.setState({
-            isRunning: false
-        })
+        // this.setState({
+        //     isRunning: false
+        // })
     }
 
     play = () => {
@@ -63,9 +63,6 @@ class IsometriaScreen extends Component {
         const count = () => {
             this.setState({ count: this.state.count + 1 }, () => {
                 this.playAlert()
-                if (this.state.count === parseInt(this.state.time)) {
-                    clearInterval(this.countTimer)
-                }
             })
         }
 
@@ -84,6 +81,7 @@ class IsometriaScreen extends Component {
     render() {
         if (this.state.isRunning) {
             const percMinute = parseInt(((this.state.count) / parseInt(this.state.time)) * 100)
+            const restante = parseInt(this.state.time) >= this.state.count ? parseInt(this.state.time) - this.state.count : 0
             return (
                 <BackgroundProgress percentage={percMinute}>
                     <View style={{ flex: 1, justifyContent: 'center' }}>
@@ -92,7 +90,7 @@ class IsometriaScreen extends Component {
                         </View>
                         <View style={{ flex: 1, justifyContent: 'center' }}>
                             <Time time={this.state.count} />
-                            <Time time={parseInt(this.state.time) - this.state.count} type='text2' appendedText={' restantes'} />
+                            <Time time={restante} type='text2' appendedText={' restantes'} />
                         </View>
                         <View style={{ flex: 1, justifyContent: 'flex-end' }}>
                             {
