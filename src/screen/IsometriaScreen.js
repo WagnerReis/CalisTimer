@@ -173,15 +173,14 @@ class IsometriaScreen extends Component {
                     </>
                     : null
                 }
-                <View style={{ flexDirection: 'row', justifyContent: 'space-evenly', marginBottom: 40 }}>
-                    <TouchableOpacity style={{ alignSelf: 'center' }} onPress={this.back} >
+                <View style={{ flexDirection: 'row', justifyContent: 'space-evenly', marginTop: 185 }}>
+                    <TouchableOpacity style={{ flex: 1, alignSelf: 'center', paddingLeft: 20 }} onPress={this.back} >
                         <Image source={require('../../assets/back.png')} />
                     </TouchableOpacity>
 
-                    <TouchableOpacity style={{ alignSelf: 'center', marginTop: 14 }} onPress={this.play} >
+                    <TouchableOpacity style={{ flex: 1, alignSelf: 'center', marginTop: 14, paddingRight: 110 }} onPress={this.play} >
                         <Image source={require('../../assets/btn-play.png')} />
                     </TouchableOpacity>
-                    <Text>Testar</Text>
                 </View>
             </ScrollView>
         )
