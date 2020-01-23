@@ -19,6 +19,7 @@ class IsometriaScreen extends Component {
         time: '20',
 
         isRunning: false,
+        paused: false,
         countdownValue: 0,
         count: 0
     }
@@ -46,21 +47,39 @@ class IsometriaScreen extends Component {
         }
     }
 
+    back = () => {
+        if (this.state.paused || !this.state.isRunning) {
+            clearInterval(this.countTimer)
+            clearInterval(this.countdownTimer)
+            this.props.navigation.goBack()
+        }
+    }
+
     stop = () => {
-        clearInterval(this.countdownTimer)
-        clearInterval(this.countTimer)
-        // this.setState({
-        //     isRunning: false
-        // })
+        this.setState({
+            paused: !this.state.paused
+        })
+    }
+
+    restart = () => {
+        if (this.state.paused) {
+            clearInterval(this.countTimer)
+            clearInterval(this.countdownTimer)
+            this.play()
+        }
     }
 
     play = () => {
         this.setState({
             count: 0,
-            countdownValue: 5
+            countdownValue: 5,
+            paused: false
         })
         this.setState({ isRunning: true })
         const count = () => {
+            if (this.state.paused) {
+                return;
+            }
             this.setState({ count: this.state.count + 1 }, () => {
                 this.playAlert()
             })
@@ -68,6 +87,9 @@ class IsometriaScreen extends Component {
 
         this.alert.play()
         this.countdownTimer = setInterval(() => {
+            if (this.state.paused) {
+                return;
+            }
             this.alert.play()
             this.setState({ countdownValue: this.state.countdownValue - 1 }, () => {
                 if (this.state.countdownValue === 0) {
@@ -82,6 +104,7 @@ class IsometriaScreen extends Component {
         if (this.state.isRunning) {
             const percMinute = parseInt(((this.state.count) / parseInt(this.state.time)) * 100)
             const restante = parseInt(this.state.time) >= this.state.count ? parseInt(this.state.time) - this.state.count : 0
+            const opacity = !this.state.paused ? 0.6 : 1
             return (
                 <BackgroundProgress percentage={percMinute}>
                     <View style={{ flex: 1, justifyContent: 'center' }}>
@@ -98,9 +121,24 @@ class IsometriaScreen extends Component {
                                     <Text style={styles.countdown}>{this.state.countdownValue}</Text>
                                     : null
                             }
-                            <TouchableOpacity style={{ alignSelf: 'center', marginBottom: 40 }} onPress={this.stop} >
-                                <Image source={require('../../assets/btn-stop.png')} />
-                            </TouchableOpacity>
+                            <View style={{ flexDirection: 'row', justifyContent: 'space-evenly', marginBottom: 40 }}>
+                                <TouchableOpacity style={{ alignSelf: 'center' }} onPress={this.back} >
+                                    <Image style={{ opacity }} source={require('../../assets/back.png')} />
+                                </TouchableOpacity>
+
+                                <TouchableOpacity style={{ alignSelf: 'center' }} onPress={this.stop} >
+                                    {
+                                        this.state.paused ?
+                                            <Image source={require('../../assets/btn-play.png')} />
+                                            :
+                                            <Image source={require('../../assets/btn-stop.png')} />
+                                    }
+                                </TouchableOpacity>
+
+                                <TouchableOpacity style={{ alignSelf: 'center' }} onPress={this.restart} >
+                                    <Image style={{ opacity }} source={require('../../assets/reload.png')} />
+                                </TouchableOpacity>
+                            </View>
                         </View>
                     </View>
                 </BackgroundProgress>
@@ -126,10 +164,16 @@ class IsometriaScreen extends Component {
                 />
                 <Text style={styles.label}>Quantos segundos:</Text>
                 <TextInput style={styles.input} keyboardType='numeric' value={this.state.time} onChangeText={text => this.setState({ time: text })} />
-                <TouchableOpacity style={{ alignSelf: 'center', marginTop: 14 }} onPress={this.play} >
-                    <Image source={require('../../assets/btn-play.png')} />
-                </TouchableOpacity>
-                <Text>Testar</Text>
+                <View style={{ flexDirection: 'row', justifyContent: 'space-evenly', marginBottom: 40 }}>
+                    <TouchableOpacity style={{ alignSelf: 'center' }} onPress={this.back} >
+                        <Image source={require('../../assets/back.png')} />
+                    </TouchableOpacity>
+
+                    <TouchableOpacity style={{ alignSelf: 'center', marginTop: 14 }} onPress={this.play} >
+                        <Image source={require('../../assets/btn-play.png')} />
+                    </TouchableOpacity>
+                    <Text>Testar</Text>
+                </View>
             </ScrollView>
         )
     }
