@@ -18,6 +18,7 @@ class AMRAPScreen extends Component {
         countdown: 1,
         time: '2',
 
+        paused: false,
         isRunning: false,
         countdownValue: 0,
         count: 0,
@@ -33,7 +34,6 @@ class AMRAPScreen extends Component {
         this.kbHide = Keyboard.addListener('keyboardWillHide', () => {
             this.setState({ keyboardIsVisible: false })
         })
-        // this.play()
     }
     componentWillUnmount() {
         this.kbShow.remove()
@@ -53,10 +53,8 @@ class AMRAPScreen extends Component {
     }
 
     stop = () => {
-        clearInterval(this.countdownTimer)
-        clearInterval(this.countTimer)
         this.setState({
-            isRunning: false
+            paused: !this.state.paused
         })
     }
 
@@ -68,13 +66,34 @@ class AMRAPScreen extends Component {
         }
     }
 
+    back = () => {
+        if (this.state.paused || !this.state.isRunning) {
+            clearInterval(this.countTimer)
+            clearInterval(this.countdownTimer)
+            this.props.navigation.goBack()
+        }
+    }
+
+    restart = () => {
+        if (this.state.paused) {
+            clearInterval(this.countTimer)
+            clearInterval(this.countdownTimer)
+            this.play()
+        }
+    }
+
     play = () => {
         this.setState({
+            paused: false,
+            repetitions: 0,
             count: 0,
             countdownValue: this.state.countdown === 1 ? 5 : 0
         })
         this.setState({ isRunning: true })
         const count = () => {
+            if(this.state.paused) {
+                return;
+            }
             this.setState({ count: this.state.count + 1 }, () => {
                 this.playAlert()
                 if (this.state.count === parseInt(this.state.time) * 60) {
@@ -87,6 +106,9 @@ class AMRAPScreen extends Component {
             this.alert.play()
             this.countdownTimer = setInterval(() => {
                 this.alert.play()
+                if(this.state.paused) {
+                    return;
+                }
                 this.setState({ countdownValue: this.state.countdownValue - 1 }, () => {
                     if (this.state.countdownValue === 0) {
                         clearInterval(this.countdownTimer)
@@ -119,6 +141,7 @@ class AMRAPScreen extends Component {
             const percTime = parseInt(((this.state.count / 60) / parseInt(this.state.time)) * 100)
             const media = this.state.repetitions > 0 ? this.state.count / this.state.repetitions : 0
             const estimated = media > 0 ? Math.floor((parseInt(this.state.time) * 60) / media) : 0
+            const opacity = !this.state.paused ? 0.6 : 1
             return (
                 <BackgroundProgress percentage={percMinute}>
                     <View style={{ flex: 1, justifyContent: 'center' }}>
@@ -160,9 +183,24 @@ class AMRAPScreen extends Component {
                                         </TouchableOpacity>
                                     </View>
                             }
-                            <TouchableOpacity style={{ alignSelf: 'center', marginBottom: 40 }} onPress={this.stop} >
-                                <Image source={require('../../assets/btn-stop.png')} />
-                            </TouchableOpacity>
+                            <View style={{ flexDirection: 'row', justifyContent: 'space-evenly', marginBottom: 40 }}>
+                                <TouchableOpacity style={{ alignSelf: 'center' }} onPress={this.back} >
+                                    <Image style={{ opacity }} source={require('../../assets/back.png')} />
+                                </TouchableOpacity>
+
+                                <TouchableOpacity style={{ alignSelf: 'center' }} onPress={this.stop} >
+                                    {
+                                        this.state.paused ?
+                                            <Image source={require('../../assets/btn-play.png')} />
+                                            :
+                                            <Image source={require('../../assets/btn-stop.png')} />
+                                    }
+                                </TouchableOpacity>
+
+                                <TouchableOpacity style={{ alignSelf: 'center' }} onPress={this.restart} >
+                                    <Image style={{ opacity }} source={require('../../assets/reload.png')} />
+                                </TouchableOpacity>
+                            </View>
                         </View>
                     </View>
                 </BackgroundProgress>

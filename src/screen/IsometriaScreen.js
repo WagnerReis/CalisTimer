@@ -33,7 +33,6 @@ class IsometriaScreen extends Component {
         this.kbHide = Keyboard.addListener('keyboardWillHide', () => {
             this.setState({ keyboardIsVisible: false })
         })
-        // this.play()
     }
     componentWillUnmount() {
         this.kbShow.remove()
@@ -55,18 +54,18 @@ class IsometriaScreen extends Component {
         }
     }
 
-    stop = () => {
-        this.setState({
-            paused: !this.state.paused
-        })
-    }
-
     restart = () => {
         if (this.state.paused) {
             clearInterval(this.countTimer)
             clearInterval(this.countdownTimer)
             this.play()
         }
+    }
+
+    stop = () => {
+        this.setState({
+            paused: !this.state.paused
+        })
     }
 
     play = () => {

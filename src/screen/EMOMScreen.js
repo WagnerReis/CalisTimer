@@ -18,6 +18,7 @@ class EMOMScreen extends Component {
         countdown: 1,
         time: '2',
 
+        paused: false,
         isRunning: false,
         countdownValue: 0,
         count: 0
@@ -32,7 +33,6 @@ class EMOMScreen extends Component {
         this.kbHide = Keyboard.addListener('keyboardWillHide', () => {
             this.setState({ keyboardIsVisible: false })
         })
-        // this.play()
     }
     componentWillUnmount() {
         this.kbShow.remove()
@@ -52,10 +52,8 @@ class EMOMScreen extends Component {
     }
 
     stop = () => {
-        clearInterval(this.countdownTimer)
-        clearInterval(this.countTimer)
         this.setState({
-            isRunning: false
+            paused: !this.state.paused
         })
     }
 
@@ -67,13 +65,25 @@ class EMOMScreen extends Component {
         }
     }
 
+    restart = () => {
+        if (this.state.paused) {
+            clearInterval(this.countTimer)
+            clearInterval(this.countdownTimer)
+            this.play()
+        }
+    }
+
     play = () => {
         this.setState({
+            paused: false,
             count: 0,
             countdownValue: this.state.countdown === 1 ? 5 : 0
         })
         this.setState({ isRunning: true })
         const count = () => {
+            if(this.state.paused){
+                return;
+            }
             this.setState({ count: this.state.count + 1 }, () => {
                 this.playAlert()
                 if (this.state.count === parseInt(this.state.time) * 60) {
@@ -85,6 +95,9 @@ class EMOMScreen extends Component {
         if (this.state.countdown === 1) {
             this.alert.play()
             this.countdownTimer = setInterval(() => {
+                if(this.state.paused){
+                    return;
+                }
                 this.alert.play()
                 this.setState({ countdownValue: this.state.countdownValue - 1 }, () => {
                     if (this.state.countdownValue === 0) {
@@ -102,6 +115,7 @@ class EMOMScreen extends Component {
         if (this.state.isRunning) {
             const percMinute = parseInt(((this.state.count % 60) / 60) * 100)
             const percTime = parseInt(((this.state.count / 60) / parseInt(this.state.time)) * 100)
+            const opacity = !this.state.paused ? 0.6 : 1
             return (
                 <BackgroundProgress percentage={percMinute}>
                     <View style={{ flex: 1, justifyContent: 'center' }}>
@@ -119,9 +133,24 @@ class EMOMScreen extends Component {
                                     <Text style={styles.countdown}>{this.state.countdownValue}</Text>
                                     : null
                             }
-                            <TouchableOpacity style={{ alignSelf: 'center', marginBottom: 40 }} onPress={this.stop} >
-                                <Image source={require('../../assets/btn-stop.png')} />
-                            </TouchableOpacity>
+                            <View style={{ flexDirection: 'row', justifyContent: 'space-evenly', marginBottom: 40 }}>
+                                <TouchableOpacity style={{ alignSelf: 'center' }} onPress={this.back} >
+                                    <Image style={{ opacity }} source={require('../../assets/back.png')} />
+                                </TouchableOpacity>
+
+                                <TouchableOpacity style={{ alignSelf: 'center' }} onPress={this.stop} >
+                                    {
+                                        this.state.paused ?
+                                            <Image source={require('../../assets/btn-play.png')} />
+                                            :
+                                            <Image source={require('../../assets/btn-stop.png')} />
+                                    }
+                                </TouchableOpacity>
+
+                                <TouchableOpacity style={{ alignSelf: 'center' }} onPress={this.restart} >
+                                    <Image style={{ opacity }} source={require('../../assets/reload.png')} />
+                                </TouchableOpacity>
+                            </View>
                         </View>
                     </View>
                 </BackgroundProgress>
