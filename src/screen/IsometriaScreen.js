@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { View, ScrollView, Text, StyleSheet, Image, TextInput, Keyboard, TouchableOpacity } from 'react-native'
+import { View, ScrollView, Text, StyleSheet, Image, TextInput, Keyboard, TouchableOpacity, KeyboardAvoidingView, Platform } from 'react-native'
 import Sound from 'react-native-sound'
 import KeepAwake from 'react-native-keep-awake'
 
@@ -149,57 +149,61 @@ class IsometriaScreen extends Component {
                 </BackgroundProgress>
             )
         }
+        const behavior = Platform.OS !== 'ios' ? 'height' : 'padding'
+        const paddingTop = Platform.OS === 'ios' ? this.state.keyboardIsVisible ? 20 : 200 : 100
         return (
-            <ScrollView style={styles.container} >
-                <Title title='Isometria' style={{ paddingTop: this.state.keyboardIsVisible ? 20 : 200 }} />
-                <Image style={{ alignSelf: 'center', marginBottom: 17 }} source={require('../../assets/settings-cog.png')} />
-                <Select
-                    label={'Objetivo:'}
-                    current={this.state.goal}
-                    options={[
-                        {
-                            id: 0,
-                            label: 'livre'
-                        },
-                        {
-                            id: 1,
-                            label: 'bater tempo'
-                        }]}
-                    onSelect={opt => this.setState({ goal: opt })}
-                />
+            <KeyboardAvoidingView style={{ flex: 1 }} behavior={behavior}>
+                <ScrollView style={styles.container} >
+                    <Title title='Isometria' style={{ paddingTop }} />
+                    <Image style={{ alignSelf: 'center', marginBottom: 17 }} source={require('../../assets/settings-cog.png')} />
+                    <Select
+                        label={'Objetivo:'}
+                        current={this.state.goal}
+                        options={[
+                            {
+                                id: 0,
+                                label: 'livre'
+                            },
+                            {
+                                id: 1,
+                                label: 'bater tempo'
+                            }]}
+                        onSelect={opt => this.setState({ goal: opt })}
+                    />
 
-                {this.state.goal !== 0 ?
-                    <>
-                        <Text style={styles.label}>Quantos segundos:</Text>
-                        <TextInput style={styles.input} keyboardType='numeric' value={this.state.time} onChangeText={text => this.setState({ time: text })} />
-                    </>
-                    : null
-                }
+                    {this.state.goal !== 0 ?
+                        <>
+                            <Text style={styles.label}>Quantos segundos:</Text>
+                            <TextInput style={styles.input} keyboardType='numeric' value={this.state.time} onChangeText={text => this.setState({ time: text })} />
+                        </>
+                        : null
+                    }
 
-                {
-                    this.state.goal !== 0 ?
-                        <View style={{ flexDirection: 'row', justifyContent: 'space-evenly', marginTop: 185 }}>
-                            <TouchableOpacity style={{ flex: 1, alignSelf: 'center', paddingLeft: 20 }} onPress={this.back} >
-                                <Image source={require('../../assets/back.png')} />
-                            </TouchableOpacity>
+                    {
+                        this.state.goal !== 0 ?
+                            <View style={{ flexDirection: 'row', justifyContent: 'space-evenly', marginTop: 185 }}>
+                                <TouchableOpacity style={{ flex: 1, alignSelf: 'center', paddingLeft: 20 }} onPress={this.back} >
+                                    <Image source={require('../../assets/back.png')} />
+                                </TouchableOpacity>
 
-                            <TouchableOpacity style={{ flex: 1, alignSelf: 'center', marginTop: 14, paddingRight: 110 }} onPress={this.play} >
-                                <Image source={require('../../assets/btn-play.png')} />
-                            </TouchableOpacity>
-                        </View>
-                        :
-                        <View style={{ flexDirection: 'row', justifyContent: 'space-evenly', marginTop: 290 }}>
-                            <TouchableOpacity style={{ flex: 1, alignSelf: 'center', paddingLeft: 20 }} onPress={this.back} >
-                                <Image source={require('../../assets/back.png')} />
-                            </TouchableOpacity>
+                                <TouchableOpacity style={{ flex: 1, alignSelf: 'center', marginTop: 14, paddingRight: 110 }} onPress={this.play} >
+                                    <Image source={require('../../assets/btn-play.png')} />
+                                </TouchableOpacity>
+                            </View>
+                            :
+                            <View style={{ flexDirection: 'row', justifyContent: 'space-evenly', marginTop: 290 }}>
+                                <TouchableOpacity style={{ flex: 1, alignSelf: 'center', paddingLeft: 20 }} onPress={this.back} >
+                                    <Image source={require('../../assets/back.png')} />
+                                </TouchableOpacity>
 
-                            <TouchableOpacity style={{ flex: 1, alignSelf: 'center', marginTop: 14, paddingRight: 110 }} onPress={this.play} >
-                                <Image source={require('../../assets/btn-play.png')} />
-                            </TouchableOpacity>
-                        </View>
+                                <TouchableOpacity style={{ flex: 1, alignSelf: 'center', marginTop: 14, paddingRight: 110 }} onPress={this.play} >
+                                    <Image source={require('../../assets/btn-play.png')} />
+                                </TouchableOpacity>
+                            </View>
 
-                }
-            </ScrollView>
+                    }
+                </ScrollView>
+            </KeyboardAvoidingView>
         )
     }
 }

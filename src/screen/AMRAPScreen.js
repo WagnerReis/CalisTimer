@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { View, ScrollView, Text, StyleSheet, Image, TextInput, Keyboard, TouchableOpacity } from 'react-native'
+import { View, ScrollView, Text, StyleSheet, Image, TextInput, Keyboard, TouchableOpacity, KeyboardAvoidingView, Platform } from 'react-native'
 import Sound from 'react-native-sound'
 import KeepAwake from 'react-native-keep-awake'
 
@@ -92,7 +92,7 @@ class AMRAPScreen extends Component {
         })
         this.setState({ isRunning: true })
         const count = () => {
-            if(this.state.paused) {
+            if (this.state.paused) {
                 return;
             }
             this.setState({ count: this.state.count + 1 }, () => {
@@ -107,7 +107,7 @@ class AMRAPScreen extends Component {
             this.alert.play()
             this.countdownTimer = setInterval(() => {
                 this.alert.play()
-                if(this.state.paused) {
+                if (this.state.paused) {
                     return;
                 }
                 this.setState({ countdownValue: this.state.countdownValue - 1 }, () => {
@@ -146,7 +146,7 @@ class AMRAPScreen extends Component {
             return (
                 <BackgroundProgress percentage={percMinute}>
                     <View style={{ flex: 1, justifyContent: 'center' }}>
-                    <KeepAwake />
+                        <KeepAwake />
                         <View style={{ flex: 1, justifyContent: 'center' }}>
                             <Title title='AMRAP' subTitle='As Many Repetitions As Possible' style={{ paddingTop: this.state.keyboardIsVisible ? 20 : 100 }} />
                         </View>
@@ -208,59 +208,64 @@ class AMRAPScreen extends Component {
                 </BackgroundProgress>
             )
         }
-        return (
-            <ScrollView style={styles.container} >
-                <Title title='AMRAP' subTitle='As Many Repetitions As Possible' style={{ paddingTop: this.state.keyboardIsVisible ? 20 : 200 }} />
-                <Image style={{ alignSelf: 'center', marginBottom: 17 }} source={require('../../assets/settings-cog.png')} />
-                <Select
-                    label={'Alertas:'}
-                    current={this.state.alerts}
-                    options={[
-                        {
-                            id: 0,
-                            label: '0s'
-                        },
-                        {
-                            id: 15,
-                            label: '15s'
-                        },
-                        {
-                            id: 30,
-                            label: '30s'
-                        },
-                        {
-                            id: 45,
-                            label: '45s'
-                        }]}
-                    onSelect={opt => this.setState({ alerts: opt })}
-                />
-                <Select
-                    label={'Contagem regressiva:'}
-                    current={this.state.countdown}
-                    options={[
-                        {
-                            id: 1,
-                            label: 'Sim'
-                        },
-                        {
-                            id: 0,
-                            label: 'Não'
-                        }]}
-                    onSelect={opt => this.setState({ countdown: opt })}
-                />
-                <Text style={styles.label}>Quantos minutos:</Text>
-                <TextInput style={styles.input} keyboardType='numeric' value={this.state.time} onChangeText={text => this.setState({ time: text })} />
-                <Text style={styles.label}>minutos</Text>
-                <View style={{ flexDirection: 'row', justifyContent: 'space-evenly', marginTop: 111 }}>
-                    <TouchableOpacity style={{ flex: 1, alignSelf: 'center', paddingLeft: 20 }} onPress={this.back} >
-                        <Image source={require('../../assets/back.png')} />
-                    </TouchableOpacity>
 
-                    <TouchableOpacity style={{ flex: 1, alignSelf: 'center', marginTop: 14, paddingRight: 110 }} onPress={this.play} >
-                        <Image source={require('../../assets/btn-play.png')} />
-                    </TouchableOpacity>
-                </View>
-            </ScrollView>
+        const behavior = Platform.OS !== 'ios' ? 'height' : 'padding'
+        const paddingTop = Platform.OS === 'ios' ? this.state.keyboardIsVisible ? 20 : 200 : 100
+        return (
+            <KeyboardAvoidingView style={{ flex: 1 }} behavior={behavior}>
+                <ScrollView style={styles.container} >
+                    <Title title='AMRAP' subTitle='As Many Repetitions As Possible' style={{ paddingTop }} />
+                    <Image style={{ alignSelf: 'center', marginBottom: 17 }} source={require('../../assets/settings-cog.png')} />
+                    <Select
+                        label={'Alertas:'}
+                        current={this.state.alerts}
+                        options={[
+                            {
+                                id: 0,
+                                label: '0s'
+                            },
+                            {
+                                id: 15,
+                                label: '15s'
+                            },
+                            {
+                                id: 30,
+                                label: '30s'
+                            },
+                            {
+                                id: 45,
+                                label: '45s'
+                            }]}
+                        onSelect={opt => this.setState({ alerts: opt })}
+                    />
+                    <Select
+                        label={'Contagem regressiva:'}
+                        current={this.state.countdown}
+                        options={[
+                            {
+                                id: 1,
+                                label: 'Sim'
+                            },
+                            {
+                                id: 0,
+                                label: 'Não'
+                            }]}
+                        onSelect={opt => this.setState({ countdown: opt })}
+                    />
+                    <Text style={styles.label}>Quantos minutos:</Text>
+                    <TextInput style={styles.input} keyboardType='numeric' value={this.state.time} onChangeText={text => this.setState({ time: text })} />
+                    <Text style={styles.label}>minutos</Text>
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-evenly', marginTop: 111 }}>
+                        <TouchableOpacity style={{ flex: 1, alignSelf: 'center', paddingLeft: 20 }} onPress={this.back} >
+                            <Image source={require('../../assets/back.png')} />
+                        </TouchableOpacity>
+
+                        <TouchableOpacity style={{ flex: 1, alignSelf: 'center', marginTop: 14, paddingRight: 110 }} onPress={this.play} >
+                            <Image source={require('../../assets/btn-play.png')} />
+                        </TouchableOpacity>
+                    </View>
+                </ScrollView>
+            </KeyboardAvoidingView>
         )
     }
 }
