@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { View, ScrollView, Text, StyleSheet, Image, TextInput, Keyboard, TouchableOpacity } from 'react-native'
 import Sound from 'react-native-sound'
+import KeepAwake from 'react-native-keep-awake'
 
 import Select from '../components/Select'
 import Title from '../components/Title'
@@ -109,6 +110,7 @@ class IsometriaScreen extends Component {
             return (
                 <BackgroundProgress percentage={percMinute}>
                     <View style={{ flex: 1, justifyContent: 'center' }}>
+                        <KeepAwake />
                         <View style={{ flex: 1, justifyContent: 'center' }}>
                             <Title title='Isometria' style={{ paddingTop: this.state.keyboardIsVisible ? 20 : 100 }} />
                         </View>
@@ -165,6 +167,7 @@ class IsometriaScreen extends Component {
                         }]}
                     onSelect={opt => this.setState({ goal: opt })}
                 />
+
                 {this.state.goal !== 0 ?
                     <>
                         <Text style={styles.label}>Quantos segundos:</Text>
@@ -172,15 +175,30 @@ class IsometriaScreen extends Component {
                     </>
                     : null
                 }
-                <View style={{ flexDirection: 'row', justifyContent: 'space-evenly', marginTop: 185 }}>
-                    <TouchableOpacity style={{ flex: 1, alignSelf: 'center', paddingLeft: 20 }} onPress={this.back} >
-                        <Image source={require('../../assets/back.png')} />
-                    </TouchableOpacity>
 
-                    <TouchableOpacity style={{ flex: 1, alignSelf: 'center', marginTop: 14, paddingRight: 110 }} onPress={this.play} >
-                        <Image source={require('../../assets/btn-play.png')} />
-                    </TouchableOpacity>
-                </View>
+                {
+                    this.state.goal !== 0 ?
+                        <View style={{ flexDirection: 'row', justifyContent: 'space-evenly', marginTop: 185 }}>
+                            <TouchableOpacity style={{ flex: 1, alignSelf: 'center', paddingLeft: 20 }} onPress={this.back} >
+                                <Image source={require('../../assets/back.png')} />
+                            </TouchableOpacity>
+
+                            <TouchableOpacity style={{ flex: 1, alignSelf: 'center', marginTop: 14, paddingRight: 110 }} onPress={this.play} >
+                                <Image source={require('../../assets/btn-play.png')} />
+                            </TouchableOpacity>
+                        </View>
+                        :
+                        <View style={{ flexDirection: 'row', justifyContent: 'space-evenly', marginTop: 290 }}>
+                            <TouchableOpacity style={{ flex: 1, alignSelf: 'center', paddingLeft: 20 }} onPress={this.back} >
+                                <Image source={require('../../assets/back.png')} />
+                            </TouchableOpacity>
+
+                            <TouchableOpacity style={{ flex: 1, alignSelf: 'center', marginTop: 14, paddingRight: 110 }} onPress={this.play} >
+                                <Image source={require('../../assets/btn-play.png')} />
+                            </TouchableOpacity>
+                        </View>
+
+                }
             </ScrollView>
         )
     }

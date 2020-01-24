@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { View, ScrollView, Text, StyleSheet, Image, TextInput, Keyboard, TouchableOpacity } from 'react-native'
 import Sound from 'react-native-sound'
+import KeepAwake from 'react-native-keep-awake'
 
 import Select from '../components/Select'
 import Title from '../components/Title'
@@ -145,6 +146,7 @@ class AMRAPScreen extends Component {
             return (
                 <BackgroundProgress percentage={percMinute}>
                     <View style={{ flex: 1, justifyContent: 'center' }}>
+                    <KeepAwake />
                         <View style={{ flex: 1, justifyContent: 'center' }}>
                             <Title title='AMRAP' subTitle='As Many Repetitions As Possible' style={{ paddingTop: this.state.keyboardIsVisible ? 20 : 100 }} />
                         </View>

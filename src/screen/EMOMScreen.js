@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { View, ScrollView, Text, StyleSheet, Image, TextInput, Keyboard, TouchableOpacity } from 'react-native'
 import Sound from 'react-native-sound'
+import KeepAwake from 'react-native-keep-awake'
 
 import Select from '../components/Select'
 import Title from '../components/Title'
@@ -81,7 +82,7 @@ class EMOMScreen extends Component {
         })
         this.setState({ isRunning: true })
         const count = () => {
-            if(this.state.paused){
+            if (this.state.paused) {
                 return;
             }
             this.setState({ count: this.state.count + 1 }, () => {
@@ -95,7 +96,7 @@ class EMOMScreen extends Component {
         if (this.state.countdown === 1) {
             this.alert.play()
             this.countdownTimer = setInterval(() => {
-                if(this.state.paused){
+                if (this.state.paused) {
                     return;
                 }
                 this.alert.play()
@@ -119,6 +120,7 @@ class EMOMScreen extends Component {
             return (
                 <BackgroundProgress percentage={percMinute}>
                     <View style={{ flex: 1, justifyContent: 'center' }}>
+                        <KeepAwake />
                         <View style={{ flex: 1, justifyContent: 'center' }}>
                             <Title title='EMOM' subTitle='Every Minute On the Minute' style={{ paddingTop: this.state.keyboardIsVisible ? 20 : 100 }} />
                         </View>
