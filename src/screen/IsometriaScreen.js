@@ -243,7 +243,7 @@ const styles = StyleSheet.create({
         fontSize: 144,
         color: 'white',
         textAlign: 'center',
-    }
+    },
 })
 
 export default IsometriaScreen

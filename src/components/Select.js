@@ -96,7 +96,8 @@ const styleSelect = StyleSheet.create({
 
     optSelected: {
         backgroundColor: 'rgba(255,255,255,0.6)',
-        opacity: 0.6
+        opacity: 0.6,
+        borderRadius: 8,
     },
 
     optLabel: {
