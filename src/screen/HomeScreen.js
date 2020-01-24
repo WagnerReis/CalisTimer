@@ -10,6 +10,7 @@ const HomeScreen = props => {
             <Button style={styles.btn} onPress={() => props.navigation.navigate('EMOM')}>EMOM</Button>
             <Button style={styles.btn} onPress={() => props.navigation.navigate('AMRAP')}>AMRAP</Button>
             <Button style={styles.btn} onPress={() => props.navigation.navigate('Isometria')}>Isometria</Button>
+            <Button style={styles.btn} onPress={() => props.navigation.navigate('About')}>Sobre</Button>
             <Image style={styles.icon} source={require('../../assets/barra.png')} />
         </View>
     )
@@ -39,7 +40,7 @@ const styles = StyleSheet.create({
 
     icon: {
         width: 220,
-        height: 270,
+        height: 200,
         alignSelf: 'center',
         marginTop: 20
     }
